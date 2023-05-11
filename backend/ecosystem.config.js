@@ -1,23 +1,17 @@
-const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, ".env.deploy") });
+require('dotenv').config({ path: '.env.deploy' });
 
 const {
-  DEPLOY_USER,
-  DEPLOY_HOST,
-  DEPLOY_PATH,
-  DEPLOY_REPO,
-  DEPLOY_REF = "origin/master",
+  DEPLOY_USER, DEPLOY_HOST, DEPLOY_PATH, DEPLOY_REPO, DEPLOY_REF,
 } = process.env;
 
 module.exports = {
   apps: [
     {
-      name: "backend",
-      script: "./dist/app.js",
+      name: 'backend',
+      script: './dist/app.js',
     },
   ],
 
-  // Настройка деплоя
   deploy: {
     production: {
       user: DEPLOY_USER,
@@ -25,8 +19,8 @@ module.exports = {
       ref: DEPLOY_REF,
       repo: DEPLOY_REPO,
       path: DEPLOY_PATH,
-      "pre-deploy-local": `scp .env ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}source/backend && scp .env.deploy ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}source/backend`,
-      "post-deploy": `cd ${DEPLOY_PATH}source/backend && npm i && npm run build && npx pm2 restart ecosystem.config.js`,
+      'post-deploy':
+        'cd backend && npm i && npm run build && pm2 startOrRestart ecosystem.config.js --env production',
     },
   },
 };
